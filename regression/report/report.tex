@@ -1,6 +1,7 @@
 \documentclass[12pt]{article}
 
 \usepackage{graphics}
+\usepackage{graphicx}
 \usepackage{epsfig}
 \usepackage{times}
 \usepackage{amsmath}
@@ -39,53 +40,87 @@
 \pagenumbering{roman}
 \maketitle
 
-\begin{abstract}
+%\begin{abstract}
 
-The thesis proposal is a type of contract between the faculty and the student. 
-An accepted thesis proposal indicates that the work proposed by the student, 
-once completed, will be accepted by the faculty as sufficiently innovative and 
-substantial as to be recognized with the award of the degree. It is part of 
-the training of the student's research apprenticeship that the form of this 
-proposal must be as concise as those proposals required by major funding 
-agencies.
+%The thesis proposal is a type of contract between the faculty and the student. 
+%An accepted thesis proposal indicates that the work proposed by the student, 
+%once completed, will be accepted by the faculty as sufficiently innovative and 
+%substantial as to be recognized with the award of the degree. It is part of 
+%the training of the student's research apprenticeship that the form of this 
+%proposal must be as concise as those proposals required by major funding 
+%agencies.
 
-\end{abstract}
+%\end{abstract}
 
 
 \pagenumbering{arabic}
 
 \section{介绍}
-上一份告中把
+上一份报告中把情感倾向性(polarity)的识别当做分类问题，在这份报告中，我们把它看做一个回归问题，
+即这次要识别的情感倾向性不再只有0,1,-1的取值，而是从-3到+3的取值范围。除此之外，其他的预
+处理步骤，特征选取步骤仍和上次步骤保持一致。
+
+训练数据的质量对于训练模型的影响至为关键。标注语料的人员共有五名，
+我们先以图表的方式来研究他们的标注一致性。图~\ref{fig:diff}和图~\ref{fig:heatmap}
+比了标注人员结果的差异。图~\ref{fig:diff}中可以明显看出标注者４与其他四名标注者
+差异较大，他把绝大部分的微博都标注为正面或者负面。图~\ref{fig:heatmap}以不同颜色
+代表不同标注的倾向性，由深到浅渐变颜色代表由负面到正面的倾向性。此图中将每个标注者
+标注的2000条数据并排在一起比较。从中可以看出标注者2和5比较一致，其次到３和1,最差
+的是４。是不是需要对标注一致性加以限制并在处理中去掉不一致的标注？这点可以考虑。
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{../hist_diff.pdf}
+  \caption{直方图(histogram)}
+  \label{fig:diff}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{../heatmap.pdf}
+  \caption{热度图(heatmap)}
+  \label{fig:heatmap}
+\end{figure}
+
+由于有五名标注者，所以我们将五名标注者的打分取平均作为标准答案。取平均之后，
+我们再以图表的方式呈现情感倾向性的分布，如图~\ref{fig:hist}所示，
+一个明显的结论是微博上的人的情感倾向略偏向于正向。
 
 \begin{figure}
   \centering
   \includegraphics[width=0.9\linewidth]{../hist.pdf}
-  %\caption{Different dependencies between words A and B}
+  \caption{情感倾向性分布}
+  \label{fig:hist}
+\end{figure}
+
+\section{回归分析}
+在这里，我们试验了简单的线性回归模型, Lasso回归和Ridge回归。分别用前1000(后1000条)微博作为训练数据，
+来对后1000条(前1000条)微博进行预测。
+
+经过对模型和参数的选择，能得到的最优结果用平均误差平方(mean squared eroor)
+是0.34和0.31。得到的标准答案和预测值的对比图表如下面图~\ref{fig:predicted1}和~\ref{fig:predicted2}。
+理想情况下，标准值
+和预测值是完全一致的，在图表中应该表现为一条45度的对角线。现在我们取得的结果
+不是很好，可以看出粗略线性关系，但是散度太大。
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\linewidth]{../predict1.pdf}
+  \caption{真实值-预测值}
+  \label{fig:predicted1}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\linewidth]{../hist_diff.pdf}
-  %\caption{Different dependencies between words A and B}
+  \includegraphics[width=0.8\linewidth]{../predict2.pdf}
+  \caption{真实值-预测值}
+  \label{fig:predicted2}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.9\linewidth]{../heatmap.pdf}
-  %\caption{Different dependencies between words A and B}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.9\linewidth]{../predict1.pdf}
-  %\caption{Different dependencies between words A and B}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.9\linewidth]{../predict2.pdf}
-  %\caption{Different dependencies between words A and B}
-\end{figure}
+\section{遇到的问题和接下来的工作}
+一个突出的问题是训练数据不足，我们的特征抽取过程总共识别出9246个特征，但是训练数据只有1000个，
+由线性代数的知识可知，列出的方程组有9246个变量，但只有1000个方程。这样的方程求出的解
+是不稳定的。
+针对这个问题，我们还需要在理论上研究有相似的应用场景的问题，以及在实践中做大量的实验。
 %\begin{footnotesize}
 %\bibliographystyle{plain}
 %\bibliography{string,itu,rfc,i-d}
