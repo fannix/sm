@@ -4,7 +4,8 @@ Conduct classification on SVMLight style file
 
 import sklearn
 import numpy as np
-from sklearn import svm
+from scipy.sparse import vstack
+from sklearn.svm.sparse import SVC
 from sklearn import datasets
 from sklearn.datasets import load_svmlight_file
 from sklearn import cross_validation
@@ -22,22 +23,25 @@ def get1v1dataset(X, y, label1, label2):
     y1 = y[y == label1]
     y2 = y[y == label2]
 
-    X = np.vstack((X1, X2))
+    X = vstack((X1, X2))
     y = np.hstack((y1, y2))
     return X, y
 
-def classify():
+def evaluate_stacking():
     """
-    cross validate a model and test
-
-    train_file: file that the model is trained on
+    Evaluate stacking method
     """
     iris = datasets.load_iris()
     X, y = iris.data, iris.target
 
-    clf1v2 = svm.SVC(C = 0.1)
-    clf1v3 = svm.SVC(C = 0.1)
-    clf2v3 = svm.SVC(C = 0.1)
+    train_file = "../data/2.txt"
+    X, y = load_svmlight_file(train_file)
+    y = y + 1
+    X = X.todense()
+
+    clf1v2 = SVC(C = 0.1, kernel="linear")
+    clf1v3 = SVC(C = 0.1, kernel="linear")
+    clf2v3 = SVC(C = 0.1, kernel="linear")
     skf = StratifiedKFold(y, 2)
 
     di = defaultdict(lambda: 0)
@@ -60,7 +64,16 @@ def classify():
                     predict2v3[i], y_test[i])
             di[s] += 1
 
-    print di
+    print "XXX\t0\t1\t2"
+    for prefix in ["001", "002", "021", "022", "101", "102", "121", "122"]:
+        print prefix+"\t",
+        for i in range(3):
+            print str(di["%s%d" % (prefix, i)]) +"\t",
+        print
+
+
+    correct = di["0010"] + di["0020"] + di["0222"] + di["1011"] + di["1211"] + di["1222"]
+    print float(correct)/len(X)
 
 if __name__ == "__main__":
-    classify()
+    evaluate_stacking()
