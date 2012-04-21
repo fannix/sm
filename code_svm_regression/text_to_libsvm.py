@@ -33,7 +33,7 @@ def main():
 
     else:
         vocab = corpora.Dictionary(document_li)
-        vocab.filter_extremes(no_below=2)
+        vocab.filter_extremes(no_below=3, no_above=0.4)
         vocab.save(vocab_bin)
         vocab.save_as_text(vocabfile+'.txt')
 
