@@ -112,10 +112,13 @@ def from_testset():
     file_li = os.listdir(datadir)
     #file_li = ["1251648860.txt"]
     time_pattern = "created_at:(.+)"
-    text_pattern = "^text:(.+)"
+    text_pattern = "^text:(.*)"
     retweet_pattern = "retweet_text:"
 
     for fname in file_li:
+        if fname[-3:] != "txt":
+            continue
+        print fname,
         time_li = []
         text_li = []
         f = open(os.path.join(datadir, fname))
@@ -123,12 +126,14 @@ def from_testset():
             line = line.strip()
             time_matches = re.findall(time_pattern, line)
             text_matches = re.findall(text_pattern, line)
-            if time_matches:
-                time = time_matches[0]
-                time_li.append(time.strip())
             if text_matches:
                     text = text_matches[0]
                     text_li.append(text.strip())
+                    if len(text) < 1:
+                        continue
+            if time_matches:
+                time = time_matches[0]
+                time_li.append(time.strip())
             if retweet_pattern in line:
                 retweet = line[len(retweet_pattern):]
                 text_li[-1] = text_li[-1] + " // " + retweet
@@ -136,11 +141,11 @@ def from_testset():
         f.close()
 
         dstfile = open(os.path.join(dstdir, fname), 'w')
+        print len(text_li), len(time_li)
         for i, e in enumerate(time_li):
             dstfile.write("%s\t%s\n" % (time_li[i], text_li[i]))
         dstfile.close()
 
-        print len(text_li)
 
 
 def main():
