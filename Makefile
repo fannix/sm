@@ -29,6 +29,6 @@ default: 0extract_text_and_label
 	for x in ~/weibo/data_svm_regression/4testset_postprocess/*.text; do cat $$x | python code_svm_regression/text_to_libsvm.py  ~/weibo/data_svm_regression/5testset_libsvm/$$(basename $$x) ~/weibo/data_svm_regression/5trainset_libsvm/vocab; done
 
 5predict: data_svm_regression/5testset_libsvm/ data_svm_regression/5trainset_libsvm/
-	#python code_svm_regression/svm_regression.py train data_svm_regression/5trainset_libsvm/train.txt data_svm_regression/5trainset_libsvm/train.label data_svm_regression/5trainset_libsvm/SVR.pickle
-	for x in data_svm_regression/5testset_libsvm/*.text; do python code_svm_regression/svm_regression.py predict $$x data_svm_regression/5trainset_libsvm/SVR.pickle > data_svm_regression/6testset_libsvm/$$(basename $$x); done
+	python code_svm_regression/regression.py train data_svm_regression/5trainset_libsvm/train.txt data_svm_regression/5trainset_libsvm/train.label data_svm_regression/5trainset_libsvm/regression.pickle
+	for x in data_svm_regression/5testset_libsvm/*.text; do python code_svm_regression/regression.py predict data_svm_regression/5trainset_libsvm/vocab.txt $$x data_svm_regression/5trainset_libsvm/regression.pickle > data_svm_regression/6testset_libsvm/$$(basename $$x); done
 	for x in data_svm_regression/6testset_libsvm/*.text; do paste data_svm_regression/1testset/$$(basename $${x%.*}).time $$x > $${x%.*}.all; done

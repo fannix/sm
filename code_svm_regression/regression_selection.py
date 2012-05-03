@@ -15,7 +15,7 @@ y_train = np.loadtxt("data_svm_regression/5trainset_libsvm/train.label")
 
 #rm = SVR(C = 0.1, kernel = "linear", epsilon = 0.3)
 #rm = Lasso(alpha = 0.001)
-rm = ElasticNet(alpha = 0.001, rho=0.8)
+rm = ElasticNet(alpha = 0.001, rho=0.7)
 
 y_predict = np.zeros(X_train.shape[0])
 kf = cross_validation.KFold(X_train.shape[0], k = 5)
@@ -29,3 +29,4 @@ print >> sys.stderr, r2_score(y_train, y_predict)
 
 #for y in y_predict:
     #print y
+
