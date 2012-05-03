@@ -54,7 +54,7 @@ if __name__ == "__main__":
     for line in sys.stdin:
         line = line.strip()
         if not line:
-            continue
-        
+            line = "AnEmptyTag"
+
         new_line = normalize_text(line)
         print new_line

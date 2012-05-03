@@ -13,7 +13,9 @@ def load_document():
             continue
         text_li.append(line)
 
-    document_li = [text.split() for text in text_li]
+    #document_li = [text.split() for text in text_li]
+    # Binary features
+    document_li = [list(set(text.split())) for text in text_li]
 
     return document_li
 

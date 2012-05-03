@@ -1,13 +1,9 @@
 default: 0extract_text_and_label
 
-0check_format:
-	#sanity checking input
-	TODO
-
 0extract_text_and_label:
-	for f in data_svm_regression/0testset_sql/*.tsv; do cat $$f | tail +2 | cut -f 3,5 > data_svm_regression/1testset/$$(basename $${f%.*}).txt; done
-	for f in data_svm_regression/1testset/*.txt; do cut -f2 $$f > $${f%.*}.time; done
-	for f in data_svm_regression/1testset/*.txt; do cut -f1 $$f > $${f%.*}.text; done
+	python code_svm_regression/0extract_text_and_label.py
+	for f in data_svm_regression/1testset/*.txt; do cut -f1 $$f > $${f%.*}.time; done
+	for f in data_svm_regression/1testset/*.txt; do cut -f2 $$f > $${f%.*}.text; done
 
 1normalization: data_svm_regression/1testset data_svm_regression/1trainset
 	#cat ~/weibo/data_svm_regression/1trainset/text1.txt | python code_svm_regression/1normalize_text.py > ~/weibo/data_svm_regression/2trainset_normalization/text1.txt
@@ -24,10 +20,6 @@ default: 0extract_text_and_label
 	#cat ~/weibo/data_svm_regression/3trainset_segmenation/text2.txt | python code_svm_regression/3postprocess.py > ~/weibo/data_svm_regression/4trainset_postprocess/text2.txt
 	#cat ~/weibo/data_svm_regression/4trainset_postprocess/text1.txt ~/weibo/data_svm_regression/4trainset_postprocess/text2.txt > ~/weibo/data_svm_regression/4trainset_postprocess/text_all.txt
 	for x in ~/weibo/data_svm_regression/3testset_segmentation/*.text; do cat $$x | python code_svm_regression/3postprocess.py > ~/weibo/data_svm_regression/4testset_postprocess/$$(basename $$x); done
-	for x in ~/weibo/data_svm_regression/4testset_postprocess/*.text; do cat $$x | python code_svm_regression/split_retweet.py > ~/weibo/data_svm_regression/4testset_postprocess/$$(basename $${x%.*}).temp; done
-	for x in ~/weibo/data_svm_regression/4testset_postprocess/*.temp; do cut -f1 < $$x  > ~/weibo/data_svm_regression/4testset_postprocess/$$(basename $${x%.*})_original.text; done
-	for x in ~/weibo/data_svm_regression/4testset_postprocess/*.temp; do cut -f2 < $$x  > ~/weibo/data_svm_regression/4testset_postprocess/$$(basename $${x%.*})_retweet.text; done
-	rm ~/weibo/data_svm_regression/4testset_postprocess/*.temp
 
 4text_to_libsvm: data_svm_regression/4trainset_postprocess/ data_svm_regression/4testset_postprocess/
 	#rm -rf data_svm_regression/5trainset_libsvm/vocab.bin
@@ -39,12 +31,4 @@ default: 0extract_text_and_label
 5predict: data_svm_regression/5testset_libsvm/ data_svm_regression/5trainset_libsvm/
 	#python code_svm_regression/regression.py train data_svm_regression/5trainset_libsvm/train.txt data_svm_regression/5trainset_libsvm/train.label data_svm_regression/5trainset_libsvm/regression.pickle
 	for x in data_svm_regression/5testset_libsvm/*.text; do python code_svm_regression/regression.py predict data_svm_regression/5trainset_libsvm/vocab.txt $$x data_svm_regression/5trainset_libsvm/regression.pickle > data_svm_regression/6testset_libsvm/$$(basename $$x); done
-	#for x in data_svm_regression/6testset_libsvm/*.text; do paste data_svm_regression/1testset/$$(basename $${x%.*}).time $$x > $${x%.*}.all; done
-
-6aggregation:
-	for f in data_svm_regression/0testset_sql/*.tsv; do cat $$f | tail +2 | cut -f 1,4 > data_svm_regression/7aggregation/$$(basename $${f%.*}).idx; done
-	python code_svm_regression/aggregation.py data_svm_regression/6testset_libsvm/statuses_original.text data_svm_regression/6testset_libsvm/statuses_retweet.text data_svm_regression/7aggregation/statuses.idx > data_svm_regression/7aggregation/statuses.all
-
-
-rm_test:
-	rm -rf data_svm_regression/1testset/* data_svm_regression/2testset_normalization/* data_svm_regression/3testset_segmentation/* data_svm_regression/4testset_postprocess/*  data_svm_regression/5testset_libsvm/*
+	for x in data_svm_regression/6testset_libsvm/*.text; do paste data_svm_regression/1testset/$$(basename $${x%.*}).time $$x > $${x%.*}.all; done

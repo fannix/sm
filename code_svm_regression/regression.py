@@ -14,7 +14,8 @@ def regression_train(X_train, y_train, output_model):
     """ Train using Lasso
     """
 
-    svr =  Lasso(alpha = 0.001)
+    #svr =  Lasso(alpha = 0.001)
+    svr = ElasticNet(alpha = 0.001, rho=0.7)
     svr.fit(X_train, y_train)
     pickle.dump(svr, open(output_model, 'w'))
 
