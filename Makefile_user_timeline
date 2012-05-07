@@ -5,7 +5,7 @@ default: 0extract_text_and_label
 	TODO
 
 0extract_text_and_label:
-	for f in data_svm_regression/0testset_usertimeline/*.tsv; do cat $$f |tail +2| sort | uniq | cut -f 3,5 > data_svm_regression/1testset/$$(basename $${f%.*}).txt; done
+	for f in data_svm_regression/0testset_usertimeline/*.tsv; do cat $$f | tail +2 | cut -f 3,5 > data_svm_regression/1testset/$$(basename $${f%.*}).txt; done
 	for f in data_svm_regression/1testset/*.txt; do cut -f2 $$f > $${f%.*}.time; done
 	for f in data_svm_regression/1testset/*.txt; do cut -f1 $$f > $${f%.*}.text; done
 
@@ -42,15 +42,9 @@ default: 0extract_text_and_label
 	#for x in data_svm_regression/6testset_libsvm/*.text; do paste data_svm_regression/1testset/$$(basename $${x%.*}).time $$x > $${x%.*}.all; done
 
 6aggregation:
-	for f in data_svm_regression/0testset_usertimeline/*.tsv; do cat $$f | tail +2 | sort |uniq |cut -f 1,4 > data_svm_regression/7aggregation/$$(basename $${f%.*}).idx; done
+	for f in data_svm_regression/0testset_usertimeline/*.tsv; do cat $$f | tail +2 | cut -f 1,4 > data_svm_regression/7aggregation/$$(basename $${f%.*}).idx; done
 	python code_svm_regression/aggregation.py data_svm_regression/6testset_libsvm/status_original.text data_svm_regression/6testset_libsvm/status_retweet.text data_svm_regression/7aggregation/status.idx > data_svm_regression/7aggregation/statuses.all
 
-7group_by_user:
-	for f in data_svm_regression/0testset_usertimeline/*.tsv; do cat $$f | tail +2 | sort |uniq |cut -f 2,3,5 > data_svm_regression/8group_by_user/$$(basename $${f%.*}).idx; done
-	cat data_svm_regression/7aggregation/statuses.all | sort > data_svm_regression/8group_by_user/statuses.all
-	paste data_svm_regression/8group_by_user/status.idx data_svm_regression/8group_by_user/statuses.all |sort > data_svm_regression/8group_by_user/status.alluser
-	for id in 1414719527 1561087031 1576545962 1578594724 1644273785 1644862977 1678016173 1681401903 1686860641 1704899681 1734402721 1772455760 1791389375 1826051631; do grep ^$$id data_svm_regression/8group_by_user/status.alluser  > data_svm_regression/8group_by_user/$$id.txt; done
-	for f in data_svm_regression/8group_by_user/*.txt; do cat $$f| cut -f3,5 > data_svm_regression/8group_by_user/$$(basename $${f%.*}).ts; done
 
 rm_test:
 	rm -rf data_svm_regression/1testset/* data_svm_regression/2testset_normalization/* data_svm_regression/3testset_segmentation/* data_svm_regression/4testset_postprocess/*  data_svm_regression/5testset_libsvm/*

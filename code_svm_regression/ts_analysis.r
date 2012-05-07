@@ -20,7 +20,7 @@ draw_curve <- function(fin){
     z.df <- data.frame(date = index(z), value = coredata(z))
     z.smooth.df <- data.frame(date = index(z.smooth), value = coredata(z.smooth))
 
-    g <- qplot(date, value, data=z.df) + geom_smooth(span=0.25, degree=2) + opts(title = fin)
+    g <- qplot(date, value, data=z.df) + geom_smooth(span=0.10, degree=2) + opts(title = fin)
     print(g)
 
     outputdir <- "/Users/mxf/weibo/data_svm_regression/7visualizations/"
@@ -29,16 +29,17 @@ draw_curve <- function(fin){
     print(name)
     name <- gsub("all", "pdf", name)
     out_file = paste(outputdir, name, sep="")
-    ggsave(file = out_file)
+    #ggsave(g, file=out_file)
 
     return(z.df)
 }
 
-basedir = "/Users/mxf/weibo/data_svm_regression/6testset_libsvm/"
+basedir = "/Users/mxf/weibo/data_svm_regression/8group_by_user/"
 
 list.df <- NULL
 
-filelist = list.files(basedir, ".*.all")
+filelist = list.files(basedir, ".*.ts")
+#filelist = list.files(basedir, "1644273785.ts")
 i <- 1
 for (name in filelist){
     fullname <- paste(basedir, name, sep="")

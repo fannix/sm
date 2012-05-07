@@ -1,0 +1,9 @@
+make rm_test
+make 0extract_text_and_label
+make 1normalization
+make 2segmentation
+make 3postprocess
+make 4text_to_libsvm
+make 5predict
+make 6aggregation
+make 7group_by_user
