@@ -40,7 +40,7 @@ def simple_trade():
         a_trade = Trade(a_stock, market)
         # Calling trade() with argument buy_date and sell_date, the
         # return value is the profit for this trade
-        profit.append(a_trade.trade(100, "2011-09-01", "2011-9-30"))
+        profit.append(a_trade.trade(100, "2011-09-01", "2011-09-30"))
 
     #You can check that the result is 0, since we are actually doing nothing
     print profit, sum(profit)
