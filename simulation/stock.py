@@ -33,11 +33,20 @@ class Trade:
         self.stock_to_trade = stock_to_trade
         self.market = market
 
-    def trade(self, number, buy_date, sell_date):
-        """return profit by traiding number unit stock at buy_date and sell_date
+    def trade(self, number, buy_date, sell_date, by_unit=True):
+        """return profit by traiding stock at buy_date and sell_date
+
+        If by_unit is True, the number is the number of units
+        If by_unit is False, the number is the money you will spend
         """
-        spend = number * (self.stock_to_trade.price_at(buy_date) - self.market.price_at(buy_date))
-        earn = number * (self.stock_to_trade.price_at(sell_date) - self.market.price_at(sell_date))
+        if by_unit:
+            spend = number * (self.stock_to_trade.price_at(buy_date) - self.market.price_at(buy_date))
+            nunit = number
+        else:
+            spend = number
+            nunit = spend / (self.stock_to_trade.price_at(buy_date) - self.market.price_at(buy_date))
+
+        earn = nunit * (self.stock_to_trade.price_at(sell_date) - self.market.price_at(sell_date))
         return earn - spend
 
 def test_stock():
@@ -50,3 +59,6 @@ def test_trade():
     market = Stock(0, "market", ["2000-01-01", "2001-01-01"], [10, 10])
     trade1 = Trade(stock1, market)
     assert trade1.trade(100, "2000-01-01", "2001-01-01") == 1000
+
+
+    assert trade1.trade(100, "2000-01-01", "2001-01-01", False) == 100
