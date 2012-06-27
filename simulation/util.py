@@ -10,9 +10,13 @@ def slope(X, y):
     """Return the slope of regression line across [X, y]
     """
 
-    slope, intercept, r_value, p_value, std_err = stats.linregress(X, y)
+    try:
+        line_slope, intercept, r_value, p_value, std_err = stats.linregress(X, y)
+    except ValueError:
+        line_slope = 0
+        r_value = 0
 
-    return slope, r_value
+    return line_slope, r_value
 
 def load_emotion_from_mysql():
     db = MySQLdb.connect(host="localhost", # your host, usually localhost
@@ -48,3 +52,12 @@ def load_stock():
         stock_li.append(Stock(stock_id, str(stock_id), stock_date, stock_price))
 
     return stock_li, market
+
+def load_event():
+    """Load report release event
+    """
+    event_array = np.loadtxt("event.tsv", skiprows=1,
+            dtype={'names': ('id', 'year', 'season', 'date', 'trend'), 'formats': ('i8', 'i8', 'i8', 'S10', 'S12')})
+
+    return event_array
+

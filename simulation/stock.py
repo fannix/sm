@@ -10,10 +10,10 @@ class Stock:
         self._company_name = company_name
         self.date_list = date_list
         self.price_list = price_list
-        self._date_to_price = {}
+        self.date_to_price = {}
 
         for i, date in enumerate(self.date_list):
-            self._date_to_price[date] = self.price_list[i]
+            self.date_to_price[date] = self.price_list[i]
 
     @property
     def company_id(self):
@@ -24,7 +24,7 @@ class Stock:
         return self._company_name
 
     def price_at(self, date):
-        return self._date_to_price[date]
+        return self.date_to_price[date]
 
 class Trade:
     """Simulate trading behaviour
@@ -44,8 +44,11 @@ class Trade:
             nunit = number
         else:
             spend = number
-            nunit = spend / (self.stock_to_trade.price_at(buy_date) - self.market.price_at(buy_date))
+            nunit = spend / self.stock_to_trade.price_at(buy_date)
 
+        print "nunit", nunit, "stock", self.stock_to_trade.price_at(buy_date),  self.stock_to_trade.price_at(sell_date),\
+                "market", self.market.price_at(buy_date), self.market.price_at(sell_date)
+        spend = nunit * (self.stock_to_trade.price_at(buy_date) - self.market.price_at(buy_date))
         earn = nunit * (self.stock_to_trade.price_at(sell_date) - self.market.price_at(sell_date))
         return earn - spend
 

@@ -27,26 +27,27 @@ class EmotionSumTradingModel:
         start_date_li = ['03-21', '06-21', '09-21', '12-21']
         end_date_li = ['03-31', '06-30', '09-30', '12-31']
 
-        start_date = "%d-%s" % (year, start_date_li[season-1])
-        end_date = "%d-%s" % (year, end_date_li[season-1])
+        format = "%Y-%m-%d"
+        start_date = datetime.datetime.strptime("%d-%s" % (year, start_date_li[season-1]), format)
+        end_date = datetime.datetime.strptime("%d-%s" % (year, end_date_li[season-1]), format)
         emotion_sum = sum(self.emotion_timeline[start_date: end_date])
 
         a_trade = Trade(self.stock, self.market)
-        format = "%Y-%m-%d"
-        end_datetime = datetime.datetime.strptime(end_date, format)
-        trade_starttime = end_datetime + 30 * pandas.datetools.BDay()
+        end_datetime = end_date
+        trade_starttime = end_datetime + 20 * pandas.datetools.BDay()
         trade_endtime = end_datetime + 40 * pandas.datetools.BDay()
 
         trade_start = trade_starttime.strftime(format)
         trade_end = trade_endtime.strftime(format)
         print trade_start, trade_end
+        money = 20000
         try:
             if emotion_sum > 0.01:
                 print "buy",
-                trade_result = a_trade.trade(100, trade_start, trade_end)
+                trade_result = a_trade.trade(money, trade_start, trade_end, False)
             elif emotion_sum < -0.01:
                 print "sell",
-                trade_result = a_trade.trade(100, trade_end, trade_start)
+                trade_result = a_trade.trade(money, trade_end, trade_start, False)
             else:
                 print "skip",
                 trade_result = 0

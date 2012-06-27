@@ -22,9 +22,11 @@ class EndPointComparisonTradingModel:
         start_date_li = ['03-11', '06-11', '09-11', '12-11']
         end_date_li = ['03-31', '06-30', '09-30', '12-31']
 
-        start_date = "%d-%s" % (year, start_date_li[season-1])
-        end_date = "%d-%s" % (year, end_date_li[season-1])
+        format = "%Y-%m-%d"
+        start_date = datetime.datetime.strptime("%d-%s" % (year, start_date_li[season-1]), format)
+        end_date = datetime.datetime.strptime("%d-%s" % (year, end_date_li[season-1]), format)
         emotion_timeline = self.emotion_timeline[start_date: end_date]
+        print emotion_timeline
         timeline1 = emotion_timeline[:-1]
         timeline2 = emotion_timeline[1:]
         delta = timeline2.values - timeline1.values
@@ -37,8 +39,7 @@ class EndPointComparisonTradingModel:
             sell = True
 
         a_trade = Trade(self.stock, self.market)
-        format = "%Y-%m-%d"
-        end_datetime = datetime.datetime.strptime(end_date, format)
+        end_datetime = end_date
         trade_starttime = end_datetime + 30 * pandas.datetools.BDay()
         trade_endtime = end_datetime + 40 * pandas.datetools.BDay()
 

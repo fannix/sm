@@ -1,4 +1,6 @@
 from datetime import date, timedelta
+import pandas
+import datetime
 
 class TradingModel:
 
@@ -42,22 +44,37 @@ class ReleaseDayModel(TradingWindowModel):
     This model compute window around the earnings report release date
     """
 
-    def __init__(self, before_days, after_days):
+    def __init__(self, release_day_li, before_days, after_days):
         """before_days: days before the earning report
         after_days: days after the earning report
         """
+        self.release_day_li = release_day_li
+        self.before_days = before_days
+        self.after_days = after_days
 
-    def get_window(self):
-        pass
+    def get_window(self, year, season):
+        release_day = [e for e in self.release_day_li if e[1]== year and e[2] == season]
 
-    def set_release_day(self, release_day):
-        self.release_day = release_day
+        if not release_day:
+            return None, None, None
+        release_day = release_day[0][3]
+        format = "%Y-%m-%d"
+        release_day = datetime.datetime.strptime(release_day, format)
+
+        trade_starttime = release_day  - self.before_days * pandas.datetools.BDay()
+        trade_endtime = release_day + self.after_days * pandas.datetools.BDay()
+
+        return trade_starttime, release_day, trade_endtime
 
     def set_emotion_series(self, li):
         pass
 
     def set_price_series(self, li):
         pass
+
+
+class TrendingModel(TradingWindowModel):
+    pass
 
 
 def testFixDayModel():

@@ -34,7 +34,7 @@ def testEmotionSumTradingModel():
             trade_result = model.trade()
             profit.append(trade_result)
             print
-        profit_bootstrap.append(np.mean(profit))
+        profit_bootstrap.append(np.sum(profit))
 
     print profit_bootstrap
     print np.mean(profit_bootstrap), np.std(profit_bootstrap)
@@ -66,12 +66,12 @@ def testEndPointComparisonTradingModel():
             trade_result = model.trade()
             profit.append(trade_result)
             print
-        profit_bootstrap.append(np.mean(profit))
+        profit_bootstrap.append(np.sum(profit))
 
     print profit_bootstrap
     print np.mean(profit_bootstrap), np.std(profit_bootstrap)
 
 
 if __name__ == "__main__":
-    #testEmotionSumTradingModel()
-    testEndPointComparisonTradingModel()
+    testEmotionSumTradingModel()
+    #testEndPointComparisonTradingModel()
